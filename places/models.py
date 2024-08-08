@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import format_html
 
 
 class Location(models.Model):
@@ -22,6 +23,13 @@ class Image(models.Model):
     )
     image = models.ImageField("Изображение", upload_to="images/")
     order = models.PositiveIntegerField("Порядок", default=0)
+
+    def image_preview(self):
+        if self.image:
+            return format_html(
+                '<img src="{}" style="max-height: 200px;"/>', self.image.url
+            )
+        return ""
 
     class Meta:
         ordering = ["order"]
