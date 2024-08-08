@@ -36,7 +36,7 @@ def home(request):
 
 def location_detail(request, id):
     place = get_object_or_404(Location, id=id)
-    images = Image.objects.filter(location=place).order_by("id")
+    images = Image.objects.filter(location=place)
     image_urls = [image.image.url for image in images]
 
     data = {
