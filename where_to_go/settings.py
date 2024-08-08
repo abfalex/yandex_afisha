@@ -5,7 +5,7 @@ from environs import Env
 from django.conf.global_settings import MEDIA_ROOT, STATICFILES_DIRS
 
 env = Env()
-env.read_env(".env")
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
