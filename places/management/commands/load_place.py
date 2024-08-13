@@ -1,5 +1,5 @@
 import requests
-from django.core.management.base import BaseCommand, CommandParser
+from django.core.management.base import BaseCommand
 from places.models import Image, Location
 from django.core.files.base import ContentFile
 
@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         location_details = get_location_details(options["url"])
-        location, created = Location.objects.get_or_create(
+        location, _ = Location.objects.get_or_create(
             title=location_details["title"],
             defaults={
                 "description_short": location_details["description_short"],
