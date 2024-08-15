@@ -6,7 +6,7 @@
 
 ## Установка
 
-Необходимо иметь установленный [Python 3.x](https://www.python.org/downloads/release/python-3125/)
+Необходимо иметь установленный [Python 3.12+](https://www.python.org/downloads/release/python-3125/)
 
 Скопируйте следующую команду и вставьте в терминал, чтобы скопировать проект:
 
