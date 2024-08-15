@@ -46,7 +46,8 @@
         <img class="d-block select-place-prompt mb-4" src="{% static 'places/hand-pointer-regular.svg' %}" alt="Select place">
         <h4>Выберите место на карте</h4>
       </div>
-
+      
+      {% verbatim block %}
       <div class="align-items-center justify-content-center d-flex" v-if="loading" style="height: 100%;">
         <div class="spinner-grow text-light" style="width: 3rem; height: 3rem;" role="status">
           <span class="sr-only">Loading...</span>
@@ -89,6 +90,7 @@
         <div v-html="selectedPlace.long_description"></div>
       </div>
     </div>
+    {% endverbatim block %}
   </script>
 
 </head>
@@ -111,7 +113,7 @@
   <script src="https://unpkg.com/@ansur/leaflet-pulse-icon@0.1.1/dist/L.Icon.Pulse.js"></script>
 
   <script src="{% static 'places/leaflet-sidebar.js' %}"></script>
-
+  
   <script>
     var map = L.map('map');
     map.setView([55.753989, 37.623191], 11);
@@ -196,52 +198,52 @@
         }
     }).addTo(map);
 
-    var sidebarApp = new Vue({
-      el: '#sidebar-app',
-      template: document.getElementById('app-template').innerHTML,
-      data: {
-        loadingPlaceId: null,
-        selectedPlace: null,  // object with attributes specified below
-          // title
-          // placeId
-          // imgs
-          // short_description
-          // long_description
-      },
-      computed: {
-        promptVisible: function () {
-          return !this.loading && !this.selectedPlace;
+      var sidebarApp = new Vue({
+        el: '#sidebar-app',
+        template: document.getElementById('app-template').innerHTML,
+        data: {
+          loadingPlaceId: null,
+          selectedPlace: null,  // object with attributes specified below
+            // title
+            // placeId
+            // imgs
+            // short_description
+            // long_description
         },
-        loading: function () {
-          return this.loadingPlaceId !== null;
+        computed: {
+          promptVisible: function () {
+            return !this.loading && !this.selectedPlace;
+          },
+          loading: function () {
+            return this.loadingPlaceId !== null;
+          },
+          mainPhotoSrc: function () {
+            if (!this.selectedPlace || !this.selectedPlace.imgs.length){
+              return null;
+            }
+            return this.selectedPlace.imgs[0];
+          },
+          carouselImgs: function () {
+            if (!this.selectedPlace || !this.selectedPlace.imgs.length){
+              return [];
+            }
+            return this.selectedPlace.imgs.slice(1);
+          },
         },
-        mainPhotoSrc: function () {
-          if (!this.selectedPlace || !this.selectedPlace.imgs.length){
-            return null;
+        updated: function () {
+          this.$nextTick(function () {
+            // Код, будет запущен только после обновления всех представлений
+            $('#place-photos').carousel();
+          })
+        },
+        methods: {
+          handlePhotosClick: function(slideId='next') {
+            // default event handlers of Bootstrap Carousel conflict with Leaflet
+            // so custom handler will mimic expected carousel behaviour
+            $('#place-photos').carousel(slideId);
           }
-          return this.selectedPlace.imgs[0];
         },
-        carouselImgs: function () {
-          if (!this.selectedPlace || !this.selectedPlace.imgs.length){
-            return [];
-          }
-          return this.selectedPlace.imgs.slice(1);
-        },
-      },
-      updated: function () {
-        this.$nextTick(function () {
-          // Код, будет запущен только после обновления всех представлений
-          $('#place-photos').carousel();
-        })
-      },
-      methods: {
-        handlePhotosClick: function(slideId='next') {
-          // default event handlers of Bootstrap Carousel conflict with Leaflet
-          // so custom handler will mimic expected carousel behaviour
-          $('#place-photos').carousel(slideId);
-        }
-      },
-    });
+      });
 
     map.on('click', function () {
       sidebarApp.selectedPlace = null;
