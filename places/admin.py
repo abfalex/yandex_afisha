@@ -14,7 +14,7 @@ class ImageInline(SortableInlineAdminMixin, admin.TabularInline):
 @admin.register(Location)
 class LocationAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [ImageInline]
-    list_display = ("id", "title", "description_short", "lng", "lat")
+    list_display = ("id", "title", "short_description", "lng", "lat")
     search_fields = ("title",)
 
 
