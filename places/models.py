@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.db import models
 from django.utils.html import format_html
 from tinymce.models import HTMLField
@@ -15,19 +16,19 @@ class Location(models.Model):
 
 
 class Image(models.Model):
-    location = models.ForeignKey(Location, related_name="images", on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, related_name="images", on_delete=models.CASCADE, verbose_name="Локация")
     image = models.ImageField("Изображение", upload_to="images/")
-    order = models.PositiveIntegerField("Порядок", default=0)
-
-    def image_preview(self):
-        if self.image:
-            return format_html(
-                '<img src="{}" style="max-height: 200px;"/>', self.image.url
-            )
-        return ""
+    order = models.PositiveIntegerField("Порядок", default=0, db_index=True)
 
     class Meta:
         ordering = ["order"]
 
     def __str__(self):
         return f"{self.order} {self.location.title}"
+
+    def image_preview(self):
+        if self.image:
+            return format_html(
+                '<img src="{}" style="max-width: 200px;"/>', self.image.url
+            )
+        return ""
