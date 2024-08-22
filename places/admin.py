@@ -20,6 +20,5 @@ class LocationAdmin(SortableAdminBase, admin.ModelAdmin):
 
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ("__str__",)
-    list_filter = ("location",)
+    raw_id_fields = ['location', ]
     ordering = ("location", "order")
