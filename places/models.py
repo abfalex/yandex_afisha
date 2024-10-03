@@ -11,12 +11,20 @@ class Location(models.Model):
     lng = models.DecimalField("Долгота", max_digits=20, decimal_places=14)
     lat = models.DecimalField("Широта", max_digits=20, decimal_places=14)
 
+    class Meta:
+        unique_together = ["title"]
+
     def __str__(self):
         return self.title
 
 
 class Image(models.Model):
-    location = models.ForeignKey(Location, related_name="images", on_delete=models.CASCADE, verbose_name="Локация")
+    location = models.ForeignKey(
+        Location,
+        related_name="images",
+        on_delete=models.CASCADE,
+        verbose_name="Локация",
+    )
     image = models.ImageField("Изображение", upload_to="images/")
     order = models.PositiveIntegerField("Порядок", default=0, db_index=True)
 

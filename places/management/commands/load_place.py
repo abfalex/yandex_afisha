@@ -1,8 +1,10 @@
+import sys
 import requests
 from django.core.management.base import BaseCommand
 from places.models import Image, Location
 from django.core.files.base import ContentFile
-
+from requests.exceptions import HTTPError, ConnectionError
+import time
 
 def get_location_details(json_url):
     response = requests.get(json_url)
@@ -17,10 +19,8 @@ def get_image_bytes(image_url):
 
 
 def save_image(location, content):
-    image = Image(location=location)
-    image_name = "place_image_.png"
-    image_file = ContentFile(content, name=image_name)
-    image.image.save(image_name, image_file, save=True)
+    image = ContentFile(content, name="place_image_.png")
+    Image.objects.create(location=location, image=image)
 
 
 class Command(BaseCommand):
@@ -39,13 +39,28 @@ class Command(BaseCommand):
         location, _ = Location.objects.get_or_create(
             title=location_details["title"],
             defaults={
-                "description_short": location_details["description_short"],
-                "description_long": location_details["description_long"],
+                "short_description": location_details["description_short"],
+                "long_description": location_details["description_long"],
                 "lng": location_details["coordinates"]["lng"],
                 "lat": location_details["coordinates"]["lat"],
             },
         )
 
         for image_url in location_details["imgs"]:
-            image = get_image_bytes(image_url)
-            save_image(location, image)
+            retry_count = 0
+            max_retries = 3
+            while retry_count < max_retries:
+                try:
+                    image = get_image_bytes(image_url)
+                    save_image(location, image)
+                except HTTPError as e:
+                    sys.stderr.write(f"HTTP ошибка при загрузке изображения {image_url}: {e}\n")
+                    break
+                except ConnectionError as e:
+                    sys.stderr.write(f"Ошибка соединения при загрузке изображения {image_url}: {e}\n")
+                    retry_count += 1
+                    if retry_count < max_retries:
+                        time.sleep(5)
+                    else:
+                        sys.stderr.write(f"Изображение {image_url} не удалось загрузить после {max_retries} попыток.\n")
+                        break
