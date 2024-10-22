@@ -30,7 +30,7 @@ def home(request):
 
 
 def location_detail(request, id):
-    place = get_object_or_404(Location, id=id)
+    place = get_object_or_404(Location.objects.prefetch_related("images"), id=id)
     images = place.images.all()
     data = {
         "title": place.title,
