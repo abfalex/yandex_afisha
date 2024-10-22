@@ -36,15 +36,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         location_details = get_location_details(options["url"])
-        location, _ = Location.objects.get_or_create(
-            title=location_details["title"],
-            defaults={
-                "short_description": location_details["description_short"],
-                "long_description": location_details["description_long"],
-                "lng": location_details["coordinates"]["lng"],
-                "lat": location_details["coordinates"]["lat"],
-            },
-        )
+
+        try:
+            location, _ = Location.objects.get_or_create(
+                title=location_details["title"],
+                defaults={
+                    "short_description": location_details["description_short"],
+                    "long_description": location_details["description_long"],
+                    "lng": location_details["coordinates"]["lng"],
+                    "lat": location_details["coordinates"]["lat"],
+                },
+            )
+        except MultipleObjectsReturned:
+            sys.stderr.write(f"Найдено несколько записей для локации с названием {location_details["title"]}.")
+            return
 
         for image_url in location_details["imgs"]:
             retry_count = 0
