@@ -37,6 +37,6 @@ class Image(models.Model):
     def image_preview(self):
         if self.image:
             return format_html(
-                '<img src="{}" style="max-width: 200px;"/>', self.image.url
+                '<img src="{}" style="max-width: 200px; max-height: 200px;"/>', self.image.url
             )
         return ""
