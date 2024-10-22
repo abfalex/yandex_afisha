@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 },
             )
         except MultipleObjectsReturned:
-            sys.stderr.write(f"Найдено несколько записей для локации с названием {location_details["title"]}.")
+            sys.stderr.write(f"Найдено несколько записей для локации с названием {location_details['title']}.")
             return
 
         for image_url in location_details["imgs"]:
