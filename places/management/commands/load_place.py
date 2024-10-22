@@ -3,6 +3,7 @@ import requests
 from django.core.management.base import BaseCommand
 from places.models import Image, Location
 from django.core.files.base import ContentFile
+from django.core.exceptions import MultipleObjectsReturned
 from requests.exceptions import HTTPError, ConnectionError
 import time
 
