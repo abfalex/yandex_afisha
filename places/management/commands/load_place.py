@@ -59,6 +59,7 @@ class Command(BaseCommand):
                 try:
                     image = get_image_bytes(image_url)
                     save_image(location, image)
+                    break
                 except HTTPError as e:
                     sys.stderr.write(f"HTTP ошибка при загрузке изображения {image_url}: {e}\n")
                     break
